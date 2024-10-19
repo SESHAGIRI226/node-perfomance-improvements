@@ -2,6 +2,7 @@ const express = require('express');
 
 const app = express();
 const cluster = require('cluster');
+const os = require('os');
 
 function delay(duration) {
     const startTime = Date.now();
@@ -15,8 +16,10 @@ app.get("/", (req, res) => {
 
 if (cluster.isMaster) {
     console.log("seshu is running master");
-    cluster.fork();
-    cluster.fork();
+    const num_Cpus = os.cpus().length;
+    for (let i = 0; i < num_Cpus; i++) {
+        cluster.fork();
+    }
 } else {
     console.log("seshu is ogging workers");
     app.listen(8000);
